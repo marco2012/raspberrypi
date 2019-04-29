@@ -3,9 +3,8 @@ import scapy.all as scapy
 
 GATEWAY = "192.168.1.1/24"
 known_hosts_dict = {
-    "MAC_ADDRESS": "NAME"
+    "MAC_ADDRESS" : "NAME"
 }
-
 
 def print_result(results_list):
     print("IP\t\t\tMAC Address")
@@ -14,14 +13,12 @@ def print_result(results_list):
         print(client["ip"] + "\t\t" + client["mac"])
 
 # https://medium.com/@777rip777/simple-network-scanner-with-python-and-scapy-802645073190
-
-
 def scan():
-    ip = GATEWAY
-    arp_request = scapy.ARP(pdst=ip)
-    broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
+    ip                    = GATEWAY
+    arp_request           = scapy.ARP(pdst=ip)
+    broadcast             = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
     arp_request_broadcast = broadcast/arp_request
-    answered_list = scapy.srp(arp_request_broadcast, timeout=1,
+    answered_list         = scapy.srp(arp_request_broadcast, timeout=1,
                               verbose=False)[0]
     clients_list = []
     mac_address_list = []
@@ -36,12 +33,17 @@ def scan():
 def check_who_is_home(mac_address_list):
     at_home = "Nessuno"
     for m in mac_address_list:
-        if known_hosts_dict.get(m):
-            at_home = known_hosts_dict[m] + ", "
-    if len(at_home.split(',')) < 3:
-        print(at_home.split(',')[0]+" è a casa.")
+        x = known_hosts_dict.get(m)
+        if x and not x in at_home:
+            at_home = x + ", "
+    
+    p = at_home.split(',')
+    if at_home == "Nessuno":
+        print("Sembra che a casa non ci sia nessuno.")
+    elif len(p) < 3:
+        print( "A casa c'è {}.".format(p[0]) )
     else:
-        print(at_home + " sono a casa ora.")
+        print("A casa ci sono {}".format(at_home))
 
 
 if __name__ == "__main__":
